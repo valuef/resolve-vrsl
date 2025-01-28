@@ -1,0 +1,454 @@
+{
+	Tools = ordered() {
+		VRSLColorPixel = MacroOperator {
+			Inputs = ordered() {
+				Input1 = InstanceInput {
+					SourceOp = "Values",
+					Source = "TopLeftRed",
+					Name = "Color",
+					ControlGroup = 1,
+					Default = 1,
+				},
+				Input2 = InstanceInput {
+					SourceOp = "Values",
+					Source = "TopLeftGreen",
+					ControlGroup = 1,
+					Default = 0,
+				},
+				Input3 = InstanceInput {
+					SourceOp = "Values",
+					Source = "TopLeftBlue",
+					ControlGroup = 1,
+					Default = 0,
+				},
+				Input4 = InstanceInput {
+					SourceOp = "Values",
+					Source = "DMXChannel",
+					Default = 1,
+				},
+				Input5 = InstanceInput {
+					SourceOp = "Values",
+					Source = "DMXUniverse",
+					Default = 1,
+				}
+			},
+			Outputs = {
+				MainOutput1 = InstanceOutput {
+					SourceOp = "Merge2",
+					Source = "Output",
+				}
+			},
+			ViewInfo = GroupInfo { Pos = { 0, 0 } },
+			Tools = ordered() {
+				Values = Background {
+					NameSet = true,
+					Inputs = {
+						Width = Input { Value = 1920, },
+						Height = Input { Value = 1080, },
+						UseFrameFormatSettings = Input { Value = 1, },
+						["Gamut.SLogVersion"] = Input { Value = FuID { "SLog2" }, },
+						TopLeftRed = Input { Value = 1, }
+					},
+					ViewInfo = OperatorInfo { Pos = { 266.491, 65.1456 } },
+					UserControls = ordered() { DMXChannel = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 510, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "Channel", }, DMXUniverse = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "Universe", } }
+				},
+				R = MacroOperator {
+					NameSet = true,
+					CustomData = { Path = { Map = { ["Setting:"] = "Macros:\\" } } },
+					Inputs = ordered() {
+						Input1 = InstanceInput {
+							SourceOp = "Publish1",
+							Source = "Value",
+							Expression = "Values.DMXUniverse",
+							Page = "Controls",
+							Default = 1,
+						},
+						Input2 = InstanceInput {
+							SourceOp = "Publish2",
+							Source = "Value",
+							Expression = "Values.DMXChannel",
+							Page = "Controls",
+							Default = 1,
+						},
+						Input3 = InstanceInput {
+							SourceOp = "Publish3",
+							Source = "Value",
+							Expression = "Values.TopLeftRed*255",
+							Page = "Controls",
+						}
+					},
+					Outputs = {
+						MainOutput1 = InstanceOutput {
+							SourceOp = "Transform1",
+							Source = "Output",
+						}
+					},
+					ViewInfo = GroupInfo { Pos = { 294.178, 101.633 } },
+					Tools = ordered() {
+						Transform1 = Transform {
+							CtrlWShown = false,
+							Inputs = {
+								Center = Input { Expression = "Point(0.5 + floor((DMXChannel-1) / 13) * (16/1920) + ((DMXUniverse-1) * (40 * 16/1920)), 0.5 - ((DMXChannel-1) % 13) * (16/1080))", },
+								Input = Input {
+									SourceOp = "Background1",
+									Source = "Output",
+								},
+								DMXChannel = Input {
+									SourceOp = "Publish2",
+									Source = "Value",
+								},
+								DMXUniverse = Input {
+									SourceOp = "Publish1",
+									Source = "Value",
+								}
+							},
+							ViewInfo = OperatorInfo { Pos = { 4.4455, 82.0574 } },
+							UserControls = ordered() { DMXChannel = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 512, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "DMX Channel", }, DMXUniverse = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "DMX Universe", } }
+						},
+						Publish1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input { Expression = "Values.DMXUniverse", }
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Universe" } }
+						},
+						Publish2 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input { Expression = "Values.DMXChannel", }
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 512, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Channel" } }
+						},
+						Background1 = Background {
+							CtrlWShown = false,
+							Inputs = {
+								EffectMask = Input {
+									SourceOp = "Rectangle1",
+									Source = "Mask",
+								},
+								Width = Input { Value = 1920, },
+								Height = Input { Value = 1080, },
+								["Gamut.SLogVersion"] = Input { Value = FuID { "SLog2" }, },
+								TopLeftRed = Input {
+									Value = 1,
+									Expression = "DMXValue / 255",
+								},
+								TopLeftGreen = Input {
+									Value = 1,
+									Expression = "TopLeftRed",
+								},
+								TopLeftBlue = Input {
+									Value = 1,
+									Expression = "TopLeftRed",
+								},
+								DMXValue = Input {
+									SourceOp = "Publish3",
+									Source = "Value",
+								}
+							},
+							ViewInfo = OperatorInfo { Pos = { -1.52051, 45.6307 } },
+							UserControls = ordered() { NewControl = { INP_Integer = false, LINKID_DataType = "Number", LINKS_Name = "", }, DMXValue = { INP_Integer = true, INP_Default = 255, INPID_InputControl = "SliderControl", INP_MinScale = 0, LINKID_DataType = "Number", INP_MaxScale = 255, LINKS_Name = "DMX Value", } }
+						},
+						Publish3 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 3,
+									Expression = "Values.TopLeftRed*255",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 255, INP_MinScale = 0, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Value" } }
+						},
+						Rectangle1 = RectangleMask {
+							CtrlWZoom = false,
+							CtrlWShown = false,
+							Inputs = {
+								Filter = Input { Value = FuID { "Fast Gaussian" }, },
+								OutputSize = Input { Value = FuID { "Custom" }, },
+								MaskWidth = Input { Value = 1920, },
+								MaskHeight = Input { Value = 1080, },
+								PixelAspect = Input { Value = { 1, 1 }, },
+								Center = Input { Value = { 0.0041666666667, 0.9925925925926 }, },
+								Width = Input { Value = 0.0083333333333, },
+								Height = Input { Value = 0.0148148148148, }
+							},
+							ViewInfo = OperatorInfo { Pos = { -6.4115, 7.45774 } },
+						}
+					},
+				},
+				Merge1 = Merge {
+					Inputs = {
+						Background = Input {
+							SourceOp = "Transform1",
+							Source = "Output",
+						},
+						Foreground = Input {
+							SourceOp = "Transform1_1",
+							Source = "Output",
+						},
+						PerformDepthMerge = Input { Value = 0, }
+					},
+					ViewInfo = OperatorInfo { Pos = { 410.777, 121.776 } },
+				},
+				G = MacroOperator {
+					NameSet = true,
+					CustomData = { Path = { Map = { ["Setting:"] = "Macros:\\" } } },
+					Inputs = ordered() {
+						Input1 = InstanceInput {
+							SourceOp = "Publish1_1",
+							Source = "Value",
+							Expression = "Values.DMXUniverse",
+							Page = "Controls",
+							Default = 1,
+						},
+						Input2 = InstanceInput {
+							SourceOp = "Publish2_1",
+							Source = "Value",
+							Expression = "Values.DMXChannel + 1",
+							Page = "Controls",
+							Default = 1,
+						},
+						Input3 = InstanceInput {
+							SourceOp = "Publish3_1",
+							Source = "Value",
+							Expression = "Values.TopLeftGreen*255",
+							Page = "Controls",
+						}
+					},
+					Outputs = {
+						MainOutput1 = InstanceOutput {
+							SourceOp = "Transform1_1",
+							Source = "Output",
+						}
+					},
+					ViewInfo = GroupInfo { Pos = { 294.649, 132.793 } },
+					Tools = ordered() {
+						Transform1_1 = Transform {
+							CtrlWShown = false,
+							Inputs = {
+								Center = Input { Expression = "Point(0.5 + floor((DMXChannel-1) / 13) * (16/1920) + ((DMXUniverse-1) * (40 * 16/1920)), 0.5 - ((DMXChannel-1) % 13) * (16/1080))", },
+								Input = Input {
+									SourceOp = "Background1_1",
+									Source = "Output",
+								},
+								DMXChannel = Input {
+									SourceOp = "Publish2_1",
+									Source = "Value",
+								},
+								DMXUniverse = Input {
+									SourceOp = "Publish1_1",
+									Source = "Value",
+								}
+							},
+							ViewInfo = OperatorInfo { Pos = { 4.4455, 82.0574 } },
+							UserControls = ordered() { DMXChannel = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 512, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "DMX Channel", }, DMXUniverse = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "DMX Universe", } }
+						},
+						Publish1_1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 2,
+									Expression = "Values.DMXUniverse",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Universe" } }
+						},
+						Publish2_1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 0,
+									Expression = "Values.DMXChannel + 1",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 512, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Channel" } }
+						},
+						Background1_1 = Background {
+							CtrlWShown = false,
+							Inputs = {
+								EffectMask = Input {
+									SourceOp = "Rectangle1_1",
+									Source = "Mask",
+								},
+								Width = Input { Value = 1920, },
+								Height = Input { Value = 1080, },
+								["Gamut.SLogVersion"] = Input { Value = FuID { "SLog2" }, },
+								TopLeftRed = Input { Expression = "DMXValue / 255", },
+								TopLeftGreen = Input { Expression = "TopLeftRed", },
+								TopLeftBlue = Input { Expression = "TopLeftRed", },
+								DMXValue = Input {
+									SourceOp = "Publish3_1",
+									Source = "Value",
+								}
+							},
+							ViewInfo = OperatorInfo { Pos = { -1.52051, 45.6307 } },
+							UserControls = ordered() { NewControl = { INP_Integer = false, LINKS_Name = "", LINKID_DataType = "Number", }, DMXValue = { INP_Integer = true, LINKS_Name = "DMX Value", INPID_InputControl = "SliderControl", INP_MinScale = 0, LINKID_DataType = "Number", INP_MaxScale = 255, INP_Default = 255, } }
+						},
+						Publish3_1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 255,
+									Expression = "Values.TopLeftGreen*255",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 255, INP_MinScale = 0, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Value" } }
+						},
+						Rectangle1_1 = RectangleMask {
+							CtrlWZoom = false,
+							CtrlWShown = false,
+							Inputs = {
+								Filter = Input { Value = FuID { "Fast Gaussian" }, },
+								OutputSize = Input { Value = FuID { "Custom" }, },
+								MaskWidth = Input { Value = 1920, },
+								MaskHeight = Input { Value = 1080, },
+								PixelAspect = Input { Value = { 1, 1 }, },
+								Center = Input { Value = { 0.0041666666667, 0.9925925925926 }, },
+								Width = Input { Value = 0.0083333333333, },
+								Height = Input { Value = 0.0148148148148, }
+							},
+							ViewInfo = OperatorInfo { Pos = { -6.4115, 7.45774 } },
+						}
+					},
+				},
+				Merge2 = Merge {
+					CtrlWZoom = false,
+					Inputs = {
+						Background = Input {
+							SourceOp = "Merge1",
+							Source = "Output",
+						},
+						Foreground = Input {
+							SourceOp = "Transform1_1_1",
+							Source = "Output",
+						},
+						PerformDepthMerge = Input { Value = 0, }
+					},
+					ViewInfo = OperatorInfo { Pos = { 411.248, 162.062 } },
+				},
+				B = MacroOperator {
+					NameSet = true,
+					CustomData = { Path = { Map = { ["Setting:"] = "Macros:\\" } } },
+					Inputs = ordered() {
+						Input1 = InstanceInput {
+							SourceOp = "Publish1_1_1",
+							Source = "Value",
+							Expression = "Values.DMXUniverse",
+							Page = "Controls",
+							Default = 1,
+						},
+						Input2 = InstanceInput {
+							SourceOp = "Publish2_1_1",
+							Source = "Value",
+							Expression = "Values.DMXChannel + 2",
+							Page = "Controls",
+							Default = 1,
+						},
+						Input3 = InstanceInput {
+							SourceOp = "Publish3_1_1",
+							Source = "Value",
+							Expression = "Values.TopLeftBlue*255",
+							Page = "Controls",
+						}
+					},
+					Outputs = {
+						MainOutput1 = InstanceOutput {
+							SourceOp = "Transform1_1_1",
+							Source = "Output",
+						}
+					},
+					ViewInfo = GroupInfo { Pos = { 294.649, 170.204 } },
+					Tools = ordered() {
+						Transform1_1_1 = Transform {
+							CtrlWShown = false,
+							Inputs = {
+								Center = Input { Expression = "Point(0.5 + floor((DMXChannel-1) / 13) * (16/1920) + ((DMXUniverse-1) * (40 * 16/1920)), 0.5 - ((DMXChannel-1) % 13) * (16/1080))", },
+								Input = Input {
+									SourceOp = "Background1_1_1",
+									Source = "Output",
+								},
+								DMXChannel = Input {
+									SourceOp = "Publish2_1_1",
+									Source = "Value",
+								},
+								DMXUniverse = Input {
+									SourceOp = "Publish1_1_1",
+									Source = "Value",
+								}
+							},
+							ViewInfo = OperatorInfo { Pos = { 4.4455, 82.0574 } },
+							UserControls = ordered() { DMXChannel = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 512, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "DMX Channel", }, DMXUniverse = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", LINKS_Name = "DMX Universe", } }
+						},
+						Publish1_1_1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 2,
+									Expression = "Values.DMXUniverse",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 3, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Universe" } }
+						},
+						Publish2_1_1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 0,
+									Expression = "Values.DMXChannel + 2",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 512, INP_Default = 1, INP_MinScale = 1, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Channel" } }
+						},
+						Background1_1_1 = Background {
+							CtrlWShown = false,
+							Inputs = {
+								EffectMask = Input {
+									SourceOp = "Rectangle1_1_1",
+									Source = "Mask",
+								},
+								Width = Input { Value = 1920, },
+								Height = Input { Value = 1080, },
+								["Gamut.SLogVersion"] = Input { Value = FuID { "SLog2" }, },
+								TopLeftRed = Input { Expression = "DMXValue / 255", },
+								TopLeftGreen = Input { Expression = "TopLeftRed", },
+								TopLeftBlue = Input { Expression = "TopLeftRed", },
+								DMXValue = Input {
+									SourceOp = "Publish3_1_1",
+									Source = "Value",
+								}
+							},
+							ViewInfo = OperatorInfo { Pos = { -1.52051, 45.6307 } },
+							UserControls = ordered() { NewControl = { INP_Integer = false, LINKID_DataType = "Number", LINKS_Name = "", }, DMXValue = { INP_Integer = true, INP_Default = 255, INPID_InputControl = "SliderControl", INP_MinScale = 0, LINKID_DataType = "Number", INP_MaxScale = 255, LINKS_Name = "DMX Value", } }
+						},
+						Publish3_1_1 = PublishNumber {
+							CtrlWZoom = false,
+							Inputs = {
+								Value = Input {
+									Value = 255,
+									Expression = "Values.TopLeftBlue*255",
+								}
+							},
+							UserControls = ordered() { Value = { INP_MaxAllowed = 1000000, INP_Integer = true, INPID_InputControl = "SliderControl", INP_MaxScale = 255, INP_MinScale = 0, INP_MinAllowed = -1000000, LINKID_DataType = "Number", ICS_ControlPage = "Controls", LINKS_Name = "DMX Value" } }
+						},
+						Rectangle1_1_1 = RectangleMask {
+							CtrlWZoom = false,
+							CtrlWShown = false,
+							Inputs = {
+								Filter = Input { Value = FuID { "Fast Gaussian" }, },
+								OutputSize = Input { Value = FuID { "Custom" }, },
+								MaskWidth = Input { Value = 1920, },
+								MaskHeight = Input { Value = 1080, },
+								PixelAspect = Input { Value = { 1, 1 }, },
+								Center = Input { Value = { 0.0041666666667, 0.9925925925926 }, },
+								Width = Input { Value = 0.0083333333333, },
+								Height = Input { Value = 0.0148148148148, }
+							},
+							ViewInfo = OperatorInfo { Pos = { -6.4115, 7.45774 } },
+						}
+					},
+				}
+			},
+		}
+	},
+	ActiveTool = "VRSLColorPixel"
+}

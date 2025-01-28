@@ -1,0 +1,95 @@
+{
+	Tools = ordered() {
+		VRSLPixel = MacroOperator {
+			Inputs = ordered() {
+				Input1 = InstanceInput {
+					SourceOp = "Background1",
+					Source = "DMXValue",
+					Default = 255,
+				},
+				Input2 = InstanceInput {
+					SourceOp = "Transform1",
+					Source = "DMXChannel",
+					Default = 1,
+				},
+				Input3 = InstanceInput {
+					SourceOp = "Transform1",
+					Source = "DMXUniverse",
+					Default = 1,
+				}
+			},
+			Outputs = {
+				MainOutput1 = InstanceOutput {
+					SourceOp = "Transform1",
+					Source = "Output",
+				}
+			},
+			ViewInfo = GroupInfo { Pos = { 0, 0 } },
+			Tools = ordered() {
+				Rectangle1 = RectangleMask {
+					Inputs = {
+						Filter = Input { Value = FuID { "Fast Gaussian" }, },
+						OutputSize = Input { Value = FuID { "Custom" }, },
+						MaskWidth = Input { Value = 1920, },
+						MaskHeight = Input { Value = 1080, },
+						PixelAspect = Input { Value = { 1, 1 }, },
+						Center = Input { Value = { 0.0041666666667, 0.9925925925926 }, },
+						Width = Input { Value = 0.0083333333333, },
+						Height = Input { Value = 0.0148148148148, }
+					},
+					ViewInfo = OperatorInfo { Pos = { 293.691, 28.4183 } },
+				},
+				Background1 = Background {
+					CtrlWZoom = false,
+					Inputs = {
+						EffectMask = Input {
+							SourceOp = "Rectangle1",
+							Source = "Mask",
+						},
+						Width = Input { Value = 1920, },
+						Height = Input { Value = 1080, },
+						["Gamut.SLogVersion"] = Input { Value = FuID { "SLog2" }, },
+						TopLeftRed = Input { Expression = "DMXValue / 255", },
+						TopLeftGreen = Input { Expression = "TopLeftRed", },
+						TopLeftBlue = Input { Expression = "TopLeftRed", },
+						DMXValue = Input { Value = 255, }
+					},
+					ViewInfo = OperatorInfo { Pos = { 299.525, 67.4484 } },
+					UserControls = ordered() { NewControl = { INP_Integer = false, LINKS_Name = "", LINKID_DataType = "Number", }, DMXValue = { INP_Integer = true, LINKS_Name = "DMX Value", INPID_InputControl = "SliderControl", INP_MinScale = 0, LINKID_DataType = "Number", INP_MaxScale = 255, INP_Default = 255, } }
+				},
+				Transform1 = Transform {
+					Inputs = {
+						Center = Input { Expression = "Point(0.5 + floor((DMXChannel-1) / 13) * (16/1920) + ((DMXUniverse-1) * (40 * 16/1920)), 0.5 - ((DMXChannel-1) % 13) * (16/1080))", },
+						Input = Input {
+							SourceOp = "Background1",
+							Source = "Output",
+						}
+					},
+					ViewInfo = OperatorInfo { Pos = { 303.605, 105.589 } },
+					UserControls = ordered() { DMXChannel = {
+							LINKS_Name = "Channel",
+							LINKID_DataType = "Number",
+							INPID_InputControl = "SliderControl",
+							INP_Default = 1,
+							INP_Integer = true,
+							INP_MinScale = 1,
+							INP_MaxScale = 512,
+							INP_MinAllowed = -1000000,
+							INP_MaxAllowed = 1000000,
+						}, DMXUniverse = {
+							LINKS_Name = "Universe",
+							LINKID_DataType = "Number",
+							INPID_InputControl = "SliderControl",
+							INP_Default = 1,
+							INP_Integer = true,
+							INP_MinScale = 1,
+							INP_MaxScale = 3,
+							INP_MinAllowed = -1000000,
+							INP_MaxAllowed = 1000000,
+						} }
+				}
+			},
+		}
+	},
+	ActiveTool = "VRSLPixel"
+}
